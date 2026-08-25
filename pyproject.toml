@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "zugferd-pdf"
+version = "0.1.0"
+description = "Generate and package ZUGFeRD / Factur-X valid PDF/A-3U electronic invoices in Python without Ghostscript (Non-AGPL)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+    { name = "Raj", email = "raj@example.com" }
+]
+keywords = [
+    "zugferd",
+    "factur-x",
+    "e-invoice",
+    "pdfa",
+    "pdfa3",
+    "en16931",
+    "xrechnung",
+    "electronic-invoice",
+    "einvoicing"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial :: Accounting",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed"
+]
+dependencies = [
+    "reportlab>=4.0.0",
+    "pikepdf>=8.0.0",
+    "pypdf>=4.0.0",
+    "lxml>=5.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "build>=1.0.0",
+    "twine>=5.0.0",
+]
+
+[project.scripts]
+zugferd = "zugferd.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/raj-sh-git/zugferd-pdf"
+Documentation = "https://github.com/raj-sh-git/zugferd-pdf#readme"
+Issues = "https://github.com/raj-sh-git/zugferd-pdf/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/zugferd"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
