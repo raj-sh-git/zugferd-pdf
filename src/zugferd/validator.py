@@ -37,29 +37,28 @@ class ValidationReport:
     def print_summary(self):
         """Prints a human-readable terminal summary report."""
         print("=" * 70)
-        print("📋 ZUGFeRD / Factur-X & PDF/A-3 Compliance Validation Report")
+        print("ZUGFeRD / Factur-X & PDF/A-3 Compliance Validation Report")
         print("=" * 70)
 
         current_cat = None
         for check in self.checks:
             if check.category != current_cat:
                 current_cat = check.category
-                print(f"\n📂 {current_cat}")
+                print(f"\n[{current_cat}]")
 
-            icon = "✅" if check.status == "PASS" else ("❌" if check.status == "FAIL" else ("⚠️" if check.status == "WARN" else "ℹ️"))
-            print(f"   {icon} [{check.status}] {check.name}: {check.message}")
+            print(f"  [{check.status}] {check.name}: {check.message}")
             if check.details:
-                print(f"      💡 {check.details}")
+                print(f"      Hint: {check.details}")
 
         print("\n" + "=" * 70)
         if self.is_valid:
-            print("🎉 OVERALL RESULT: PASSED (100% Compliant ZUGFeRD / PDF/A-3 Invoice)")
-            print("   Ready for official validation: https://e-rechnung-vorlage.de/xrechnung-zugferd-validator/")
+            print("OVERALL RESULT: PASSED (100% Compliant ZUGFeRD / PDF/A-3 Invoice)")
+            print("Ready for official validation: https://e-rechnung-vorlage.de/xrechnung-zugferd-validator/")
         else:
-            print(f"❌ OVERALL RESULT: FAILED ({len(self.errors)} error(s) detected)")
+            print(f"OVERALL RESULT: FAILED ({len(self.errors)} error(s) detected)")
             print("\nErrors to fix:")
             for idx, err in enumerate(self.errors, 1):
-                print(f"   {idx}. {err}")
+                print(f"  {idx}. {err}")
         print("=" * 70)
 
 

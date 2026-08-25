@@ -119,8 +119,8 @@ def handle_create(args):
         title=f"Invoice {invoice.invoice_number}",
         creator=invoice.seller.name,
     )
-    print(f"✅ Generated compliant ZUGFeRD invoice: {output_path}")
-    print("   Validate at: https://e-rechnung-vorlage.de/xrechnung-zugferd-validator/")
+    print(f"Generated compliant ZUGFeRD invoice: {output_path}")
+    print("Validate at: https://e-rechnung-vorlage.de/xrechnung-zugferd-validator/")
 
 
 def handle_package(args):
@@ -142,24 +142,24 @@ def handle_package(args):
         conformance_level=args.profile,
         additional_attachments=additional_att if additional_att else None,
     )
-    print(f"✅ Successfully created PDF/A-3U document: {args.output_pdf}")
+    print(f"Successfully created PDF/A-3U document: {args.output_pdf}")
 
 
 def handle_extract(args):
     try:
         xml_bytes = extract_zugferd_xml(args.pdf_file, target_file=args.output)
         if args.output:
-            print(f"✅ Extracted XML saved to: {args.output}")
+            print(f"Extracted XML saved to: {args.output}")
         else:
             print(xml_bytes.decode("utf-8"))
     except Exception as e:
-        print(f"❌ Error: {e}", file=sys.stderr)
+        print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
 
 
 def handle_validate(args):
     if not os.path.exists(args.pdf_file):
-        print(f"❌ Error: File not found: {args.pdf_file}", file=sys.stderr)
+        print(f"Error: File not found: {args.pdf_file}", file=sys.stderr)
         sys.exit(1)
 
     report = validate_zugferd_pdf(args.pdf_file, print_report=True)

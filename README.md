@@ -6,22 +6,23 @@
 [![PDF/A Conformance](https://img.shields.io/badge/PDF%2FA-3U%20(ISO%2019005--3)-green.svg)](https://www.iso.org/standard/57222.html)
 [![Non-AGPL](https://img.shields.io/badge/License-100%25%20Non--AGPL-brightgreen.svg)](#license--agpl-free-guarantee)
 
-A fast, lightweight, and **commercially friendly (Non-AGPL)** Python library and CLI tool to generate and package **ZUGFeRD 2.x / Factur-X** hybrid electronic invoices conforming to **PDF/A-3U (ISO 19005-3)** and **EN 16931**.
+A fast, lightweight, and **commercially friendly (Non-AGPL)** Python library and CLI tool to generate, package, and validate **ZUGFeRD 2.x / Factur-X** hybrid electronic invoices conforming to **PDF/A-3U (ISO 19005-3)** and **EN 16931**.
 
 ---
 
-## 🎯 Key Features
+## Key Features
 
-- ✅ **Strict PDF/A-3U Conformance (ISO 19005-3)**: Full Unicode mapping (`ToUnicode`) for embedded fonts.
-- ✅ **Standard OutputIntent**: Valid embedded sRGB ICC profile (`Identifier: sRGB`, `Info: sRGB IEC61966-2.1`).
-- ✅ **UN/CEFACT CII (EN 16931)**: Generates valid `factur-x.xml` adhering to European e-invoicing standards.
-- ✅ **Multi-Attachment Safety**: Preserves existing attachments and allows adding extra `.xml` / `.pdf` documents with proper `/AFRelationship` (no corruption).
-- ✅ **100% Non-AGPL / Commercially Friendly**: Replaces Ghostscript and PyMuPDF using permissive open-source libraries (BSD-3-Clause / MPL-2.0 / MIT).
-- ✅ **CLI & Python API**: Use as a command-line tool or as an importable library.
+- **Strict PDF/A-3U Conformance (ISO 19005-3)**: Full Unicode mapping (`ToUnicode`) for embedded fonts.
+- **Standard OutputIntent**: Valid embedded sRGB ICC profile (`Identifier: sRGB`, `Info: sRGB IEC61966-2.1`).
+- **UN/CEFACT CII (EN 16931)**: Generates valid `factur-x.xml` adhering to European e-invoicing standards.
+- **Multi-Attachment Safety**: Preserves existing attachments and allows adding extra `.xml` / `.pdf` documents with proper `/AFRelationship` without corruption.
+- **Built-in Validator**: Thorough local compliance checks for PDF/A-3 container and EN 16931 Schematron business rules (e.g. BR-DEC-23).
+- **100% Non-AGPL / Commercially Friendly**: Replaces Ghostscript and PyMuPDF using permissive open-source libraries (BSD-3-Clause / MPL-2.0 / MIT).
+- **CLI & Python API**: Use as a command-line tool or as an importable library.
 
 ---
 
-## 📦 Installation
+## Installation
 
 ```bash
 pip install zugferd-pdf
@@ -29,7 +30,7 @@ pip install zugferd-pdf
 
 ---
 
-## 🚀 Quick Usage
+## Quick Usage
 
 ### 1. Package an Existing PDF + XML into PDF/A-3U
 
@@ -131,12 +132,30 @@ invoice = Invoice(
 
 # 5. Generate Compliant PDF/A-3U Document
 pdf_bytes = create_zugferd_invoice(invoice, output_path="zugferd_invoice.pdf")
-print("Invoice generated successfully!")
+print("Invoice generated successfully.")
 ```
 
 ---
 
-### 3. Extract XML from an Existing ZUGFeRD PDF
+### 3. Validate Any PDF in Python
+
+```python
+from zugferd import validate_zugferd_pdf
+
+# Returns a ValidationReport object
+report = validate_zugferd_pdf("invoice.pdf", print_report=True)
+
+if report.is_valid:
+    print("PDF is compliant.")
+else:
+    print(f"Validation failed with {len(report.errors)} error(s):")
+    for err in report.errors:
+        print(f" - {err}")
+```
+
+---
+
+### 4. Extract XML from an Existing ZUGFeRD PDF
 
 ```python
 from zugferd import extract_zugferd_xml
@@ -147,25 +166,7 @@ print(xml_bytes.decode("utf-8"))
 
 ---
 
-### 4. Validate Any PDF in Python
-
-```python
-from zugferd import validate_zugferd_pdf
-
-# Returns a ValidationReport object
-report = validate_zugferd_pdf("invoice.pdf", print_report=True)
-
-if report.is_valid:
-    print("PDF is 100% compliant!")
-else:
-    print(f"Validation failed with {len(report.errors)} error(s):")
-    for err in report.errors:
-        print(f" - {err}")
-```
-
----
-
-## 🛠️ Command-Line Interface (CLI)
+## Command-Line Interface (CLI)
 
 The package installs a global CLI tool named `zugferd`:
 
@@ -188,20 +189,20 @@ zugferd extract invoice.pdf -o extracted.xml
 
 ---
 
-## 🔍 Validation
+## Validation
 
 Upload your generated PDF to the official / popular German e-invoicing validator:
-🔗 **[e-rechnung-vorlage.de/xrechnung-zugferd-validator](https://e-rechnung-vorlage.de/xrechnung-zugferd-validator/)**
+[https://e-rechnung-vorlage.de/xrechnung-zugferd-validator/](https://e-rechnung-vorlage.de/xrechnung-zugferd-validator/)
 
 Verified against:
-- ✅ **VeraPDF**: Strict PDF/A-3U (ISO 19005-3:2012) conformance.
-- ✅ **Factur-X / ZUGFeRD 2.x Schematron (`FACTUR-X_EN16931.xslt`)**: Valid specification identifier `urn:cen.eu:en16931:2017`.
-- ✅ **ColorSync / OutputIntent**: Valid embedded sRGB profile.
-- ✅ **Associated Files (`/AF`)**: Correct `/Alternative` and `/Supplement` relationships.
+- **VeraPDF**: Strict PDF/A-3U (ISO 19005-3:2012) conformance.
+- **Factur-X / ZUGFeRD 2.x Schematron (`FACTUR-X_EN16931.xslt`)**: Valid specification identifier `urn:cen.eu:en16931:2017`.
+- **ColorSync / OutputIntent**: Valid embedded sRGB profile.
+- **Associated Files (`/AF`)**: Correct `/Alternative` and `/Supplement` relationships.
 
 ---
 
-## 🚢 Publishing to PyPI
+## Publishing to PyPI
 
 ### Option 1: Manual Upload with Twine
 1. Build distributions:
@@ -223,7 +224,7 @@ This repository includes `.github/workflows/publish.yml`. Connect your GitHub re
 
 ---
 
-## ⚖️ License & AGPL-Free Guarantee
+## License & AGPL-Free Guarantee
 
 Licensed under the **MIT License**.
 
