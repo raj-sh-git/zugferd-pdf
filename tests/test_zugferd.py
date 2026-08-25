@@ -216,6 +216,45 @@ class TestZugferdPdfA3u(unittest.TestCase):
         self.assertIn(b"CrossIndustryInvoice", extracted)
         self.assertIn(b"TEST-2026-99", extracted)
 
+    def test_validate_zugferd_pdf(self):
+        """Verify the built-in validator function on valid and invalid invoices."""
+        from zugferd import validate_zugferd_pdf
+
+        # 1. Test Valid PDF
+        valid_pdf_bytes = create_zugferd_invoice(self.invoice)
+        report = validate_zugferd_pdf(valid_pdf_bytes)
+        self.assertTrue(report.is_valid)
+        self.assertEqual(len(report.errors), 0)
+        self.assertEqual(report.guideline_id, "urn:cen.eu:en16931:2017")
+        self.assertEqual(report.conformance_level, "PDF/A-3U")
+
+        # 2. Test Invalid XML (BR-DEC-23 violation: 4 decimals on line total)
+        invalid_xml = b'''<?xml version="1.0" encoding="UTF-8"?>
+<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"
+    xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100">
+  <rsm:ExchangedDocumentContext>
+    <ram:GuidelineSpecifiedDocumentContextParameter>
+      <ram:ID>urn:cen.eu:en16931:2017#invalid_id</ram:ID>
+    </ram:GuidelineSpecifiedDocumentContextParameter>
+  </rsm:ExchangedDocumentContext>
+  <rsm:SupplyChainTradeTransaction>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:LineTotalAmount>100.0000</ram:LineTotalAmount>
+      </ram:SpecifiedTradeSettlementLineMonetarySummation>
+    </ram:IncludedSupplyChainTradeLineItem>
+  </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>'''
+
+        invalid_pdf_bytes = package_zugferd_pdfa3u(valid_pdf_bytes, invalid_xml)
+        bad_report = validate_zugferd_pdf(invalid_pdf_bytes)
+        self.assertFalse(bad_report.is_valid)
+        self.assertGreater(len(bad_report.errors), 0)
+        # Check that both BR-DEC-23 and invalid ram:ID were caught
+        error_text = " ".join(bad_report.errors)
+        self.assertIn("BR-DEC-23", error_text)
+        self.assertIn("GuidelineSpecifiedDocumentContextParameter", error_text)
+
 
 if __name__ == "__main__":
     unittest.main()

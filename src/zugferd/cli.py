@@ -1,6 +1,6 @@
 """
 ZUGFeRD / Factur-X Command Line Interface.
-Provides global 'zugferd' CLI commands: create, package, extract.
+Provides global 'zugferd' CLI commands: create, package, extract, validate.
 """
 
 import argparse
@@ -19,6 +19,7 @@ from zugferd.models import (
 )
 from zugferd.pdf_builder import generate_invoice_pdf
 from zugferd.pdfa_packager import package_zugferd_pdfa3u
+from zugferd.validator import validate_zugferd_pdf
 from zugferd.xml_generator import generate_facturx_xml
 
 
@@ -103,7 +104,7 @@ def create_sample_invoice() -> Invoice:
 def handle_create(args):
     invoice = create_sample_invoice()
     output_path = args.output
-    
+
     # 1. Visual PDF
     pdf_bytes = generate_invoice_pdf(invoice)
     # 2. XML
@@ -156,6 +157,16 @@ def handle_extract(args):
         sys.exit(1)
 
 
+def handle_validate(args):
+    if not os.path.exists(args.pdf_file):
+        print(f"❌ Error: File not found: {args.pdf_file}", file=sys.stderr)
+        sys.exit(1)
+
+    report = validate_zugferd_pdf(args.pdf_file, print_report=True)
+    if not report.is_valid:
+        sys.exit(1)
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="zugferd",
@@ -183,6 +194,11 @@ def main():
     p_extract.add_argument("pdf_file", help="PDF file to extract XML from")
     p_extract.add_argument("-o", "--output", help="Optional output XML file path")
     p_extract.set_defaults(func=handle_extract)
+
+    # Command: validate
+    p_validate = subparsers.add_parser("validate", help="Validate a PDF for ZUGFeRD & PDF/A-3 compliance")
+    p_validate.add_argument("pdf_file", help="PDF file to validate")
+    p_validate.set_defaults(func=handle_validate)
 
     args = parser.parse_args()
     if hasattr(args, "func"):

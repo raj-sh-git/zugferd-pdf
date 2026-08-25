@@ -147,11 +147,32 @@ print(xml_bytes.decode("utf-8"))
 
 ---
 
+### 4. Validate Any PDF in Python
+
+```python
+from zugferd import validate_zugferd_pdf
+
+# Returns a ValidationReport object
+report = validate_zugferd_pdf("invoice.pdf", print_report=True)
+
+if report.is_valid:
+    print("PDF is 100% compliant!")
+else:
+    print(f"Validation failed with {len(report.errors)} error(s):")
+    for err in report.errors:
+        print(f" - {err}")
+```
+
+---
+
 ## 🛠️ Command-Line Interface (CLI)
 
 The package installs a global CLI tool named `zugferd`:
 
 ```bash
+# Validate any PDF for ZUGFeRD & PDF/A-3 compliance with detailed diagnostic summary
+zugferd validate invoice.pdf
+
 # Generate a sample invoice PDF/A-3U
 zugferd create invoice.pdf
 
