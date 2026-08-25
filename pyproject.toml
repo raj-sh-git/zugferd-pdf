@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "zugferd-pdf"
-version = "0.1.1"
+version = "0.1.2"
 description = "Generate and package ZUGFeRD / Factur-X valid PDF/A-3U electronic invoices in Python without Ghostscript (Non-AGPL)"
 readme = "README.md"
 requires-python = ">=3.9"

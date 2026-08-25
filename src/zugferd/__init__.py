@@ -20,7 +20,7 @@ from zugferd.pdfa_packager import generate_xmp_metadata, package_zugferd_pdfa3u
 from zugferd.validator import CheckItem, ValidationReport, validate_zugferd_pdf
 from zugferd.xml_generator import generate_facturx_xml
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 
 def create_zugferd_invoice(
